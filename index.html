@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>$COFFEE TapGame</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        #coffeeCup { width: 100px; height: 100px; cursor: pointer; }
+        #score { font-size: 2em; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Tap the $COFFEE Cup!</h1>
+    <img id="coffeeCup" src="https://your-image-url.com/coffee-cup.png" onclick="incrementScore()" alt="Coffee Cup">
+    <div id="score">0</div>
+
+    <script>
+        let score = 0;
+        function incrementScore() {
+            score++;
+            document.getElementById('score').innerText = score;
+        }
+    </script>
+</body>
+</html>
