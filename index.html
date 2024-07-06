@@ -8,6 +8,15 @@
             font-family: Arial, sans-serif;
             background: url('background.png') no-repeat center center fixed;
             background-size: cover;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #game-container {
+            text-align: center;
         }
         #coffeeCup {
             width: 200px;
@@ -26,12 +35,14 @@
     </style>
 </head>
 <body>
-    <h1 style="color: #fff;">Tap the $COFFEE Cup!</h1>
-    <img id="coffeeCup" src="cup_empty.jpg" onclick="incrementScore()" alt="Coffee Cup">
-    <div id="score">0</div>
-    <div id="leaderboard">
-        <h2>Leaderboard</h2>
-        <ul id="leaderboard-list"></ul>
+    <div id="game-container">
+        <h1 style="color: #fff;">Tap the $COFFEE Cup!</h1>
+        <img id="coffeeCup" src="cup_empty.jpg" onclick="incrementScore()" alt="Coffee Cup">
+        <div id="score">0</div>
+        <div id="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard-list"></ul>
+        </div>
     </div>
 
     <script>
