@@ -4,23 +4,23 @@
     <title>$COFFEE TapGame</title>
     <style>
         body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background: url('background.png') no-repeat center center fixed;
-            background-size: cover;
             margin: 0;
-            overflow: hidden;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
         }
         #game-container {
             text-align: center;
         }
         #coffeeCup {
-            width: 200px;
-            height: 200px;
+            width: 80vw; /* Width responsive to viewport */
+            height: auto; /* Maintain aspect ratio */
+            max-width: 300px; /* Maximum size for larger screens */
             cursor: pointer;
         }
         #score {
