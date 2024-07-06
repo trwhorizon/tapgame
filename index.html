@@ -15,12 +15,19 @@
             font-family: Arial, sans-serif;
         }
         #game-container {
-            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         #coffeeCup {
-            width: 80vw; /* Width responsive to viewport */
-            height: auto; /* Maintain aspect ratio */
-            max-width: 300px; /* Maximum size for larger screens */
+            width: 100%;
+            height: 100%;
+            max-width: 100vw; /* Maximum size for larger screens */
+            max-height: 100vh; /* Maximum size for larger screens */
+            object-fit: contain; /* Maintain aspect ratio */
             cursor: pointer;
         }
         #score {
