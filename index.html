@@ -52,9 +52,10 @@
             border: 2px solid #FFD700; /* Add a border */
             padding: 10px;
             border-radius: 10px;
-            background: rgba(0, 0, 0, 0.5); /* Add a semi-transparent background */
+            background: linear-gradient(to bottom right, #FFD700, #FFFACD); /* Add a gradient background */
             width: 80%;
             max-width: 400px;
+            text-align: left; /* Align text to the left */
         }
         h1 {
             color: #FFD700; /* Softer yellow color */
@@ -69,6 +70,12 @@
             vertical-align: middle;
             margin-right: 5px;
         }
+        #leaderboard-list {
+            padding-left: 20px; /* Indent list items */
+        }
+        #leaderboard-list li {
+            list-style: none;
+        }
     </style>
 </head>
 <body>
@@ -79,7 +86,7 @@
         </div>
         <div id="score">0</div>
         <div id="leaderboard">
-            <h2><img src="trophy-icon.jpg" class="trophy-icon" alt="Trophy Icon"> Leaderboard</h2>
+            <h2><img src="trophy-icon.png" class="trophy-icon" alt="Trophy Icon"> Leaderboard</h2>
             <ul id="leaderboard-list"></ul>
         </div>
     </div>
