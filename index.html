@@ -44,7 +44,7 @@
         #score {
             position: absolute;
             top: 20px; /* Adjust as needed */
-            left: 50%;
+            left: 60%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: #FFD700; /* Softer yellow color */
@@ -127,19 +127,19 @@
         const playerName = prompt('Enter your name:');
 
         function incrementScore() {
-            score++;
             tapCount++;
-            document.getElementById('score').innerText = score;
             updateCupImage();
-            updateLeaderboard();
+            if (tapCount >= 5) {
+                score++;
+                tapCount = 0; // Reset tap count after 5 taps
+                document.getElementById('score').innerText = score;
+                updateLeaderboard();
+            }
         }
 
         function updateCupImage() {
             let imageIndex = Math.min(tapCount, 5); // Change image every tap, up to 5 taps
             document.getElementById('coffeeCup').src = cupImages[imageIndex];
-            if (tapCount >= 5) {
-                tapCount = 0; // Reset tap count after 5 taps
-            }
         }
 
         function updateLeaderboard() {
