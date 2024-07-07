@@ -16,6 +16,7 @@
             font-family: Arial, sans-serif;
         }
         #game-container {
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -26,6 +27,7 @@
             text-align: center; /* Center the text */
         }
         .image-container {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -40,10 +42,14 @@
             cursor: pointer;
         }
         #score {
+            position: absolute;
+            top: 20px; /* Adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 2em;
-            margin-top: 20px;
             color: #FFD700; /* Softer yellow color */
             text-shadow: 1px 1px 2px #000; /* Add a subtle shadow for better readability */
+            z-index: 1;
         }
         #leaderboard {
             margin-top: 30px;
@@ -99,8 +105,8 @@
         <h1>Tap the $COFFEE!</h1>
         <div class="image-container">
             <img id="coffeeCup" src="cup_empty.jpg" onclick="incrementScore()" alt="Coffee Cup">
+            <div id="score">0</div>
         </div>
-        <div id="score">0</div>
         <div id="leaderboard">
             <h2><img src="trophy-icon.jpg" class="trophy-icon" alt="Trophy Icon"> Leaderboard</h2>
             <ul id="leaderboard-list"></ul>
