@@ -16,8 +16,7 @@
             font-family: Arial, sans-serif;
         }
         #game-container {
-            position: relative;
-            display: flex;
+            display: none; /* Hide the game container initially */
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
@@ -27,7 +26,6 @@
             text-align: center; /* Center the text */
         }
         .image-container {
-            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -98,9 +96,30 @@
             border-bottom: 1px solid #ddd; /* Light grey border for a modern look */
             font-weight: bold; /* Make list items bold */
         }
+        #start-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        #start-button button {
+            padding: 20px;
+            font-size: 2em;
+            background: #FFD700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px #000;
+        }
     </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <div id="start-button">
+        <button onclick="initGame()">Start $COFFEE TapGame</button>
+    </div>
     <div id="game-container">
         <h1>Tap the $COFFEE!</h1>
         <div class="image-container">
@@ -116,6 +135,7 @@
     <script>
         let score = 0;
         let tapCount = 0; // Counter for taps
+        let playerName = '';
         const cupImages = [
             'cup_empty.jpg',
             'cup_fill_1.jpg',
@@ -124,7 +144,13 @@
             'cup_fill_4.jpg',
             'cup_fill_5.jpg'
         ];
-        const playerName = prompt('Enter your name:');
+
+        function initGame() {
+            Telegram.WebApp.ready();
+            playerName = Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.username : 'Player';
+            document.getElementById('start-button').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
+        }
 
         function incrementScore() {
             tapCount++;
