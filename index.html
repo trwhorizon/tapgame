@@ -136,7 +136,27 @@
             background-size: cover;
         }
     </style>
+    <!-- Firebase -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCF8mIaYN1uwrs2Y30WFn_E9RScmU_fuGs",
+    authDomain: "tapgamecoffee.firebaseapp.com",
+    projectId: "tapgamecoffee",
+    storageBucket: "tapgamecoffee.appspot.com",
+    messagingSenderId: "452690619797",
+    appId: "1:452690619797:web:065f95562f05f5f5efda9c"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
 </head>
 <body>
     <div id="start-button" onclick="initGame()">
@@ -177,6 +197,7 @@
             document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
             restoreScore();
+            fetchLeaderboard();
         }
 
         function incrementScore() {
@@ -202,7 +223,7 @@
 
         function showPlusOne() {
             const plusOne = document.getElementById('plus-one');
-            plusOne.style.opacity = 1; // Show the +1
+                        plusOne.style.opacity = 1; // Show the +1
             setTimeout(() => {
                 plusOne.style.opacity = 0; // Hide the +1 after 0.5 seconds
             }, 500);
@@ -217,20 +238,29 @@
         }
 
         function updateLeaderboard() {
-            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-            leaderboard = leaderboard.filter(player => player.name !== playerName);
-            leaderboard.push({ name: playerName, score: score });
-            leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-            displayLeaderboard(leaderboard);
+            firebase.database().ref('leaderboard/' + playerName).set({
+                name: playerName,
+                score: score
+            }).then(() => {
+                fetchLeaderboard();
+            });
+        }
+
+        function fetchLeaderboard() {
+            firebase.database().ref('leaderboard').orderByChild('score').limitToLast(16).once('value', snapshot => {
+                const leaderboard = [];
+                snapshot.forEach(childSnapshot => {
+                    leaderboard.unshift(childSnapshot.val()); // Unshift to reverse order
+                });
+                displayLeaderboard(leaderboard);
+            });
         }
 
         function displayLeaderboard(leaderboard) {
             const leaderboardList = document.getElementById('leaderboard-list');
             leaderboardList.innerHTML = '';
             leaderboard.forEach((player, index) => {
-                                const li = document.createElement('li');
+                const li = document.createElement('li');
                 const rank = index === 0 ? '1er' : `${index + 1}ème`;
                 li.textContent = `${rank} : ${player.name} - ${player.score}`;
                 leaderboardList.appendChild(li);
@@ -247,8 +277,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-            displayLeaderboard(leaderboard);
+            fetchLeaderboard();
         });
     </script>
 </body>
