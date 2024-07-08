@@ -11,7 +11,7 @@
             align-items: center;
             height: 100vh;
             width: 100vw;
-            background: url('background.png') no-repeat center center fixed;
+            background: url('background.jpg') no-repeat center center fixed;
             background-size: cover;
             font-family: Arial, sans-serif;
         }
@@ -31,6 +31,7 @@
             align-items: center;
             width: 100%;
             height: 70%; /* Adjust height to ensure space for the image */
+            position: relative;
         }
         #coffeeCup {
             width: auto;
@@ -41,13 +42,25 @@
         }
         #score {
             position: absolute;
-            top: 20px; /* Adjust as needed */
+            top: 40px; /* Adjust as needed */
             left: 60%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: #FFD700; /* Softer yellow color */
             text-shadow: 1px 1px 2px #000; /* Add a subtle shadow for better readability */
             z-index: 1;
+        }
+        #plus-one {
+            position: absolute;
+            top: 60px; /* Adjust as needed */
+            left: 70%; /* Adjust as needed */
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            color: green; /* Green color */
+            text-shadow: 1px 1px 2px #000; /* Add a subtle shadow for better readability */
+            z-index: 1;
+            opacity: 0; /* Initially invisible */
+            transition: opacity 0.5s ease-out;
         }
         #leaderboard {
             margin-top: 30px;
@@ -102,29 +115,22 @@
             align-items: center;
             height: 100vh;
             width: 100vw;
-            background: rgba(0, 0, 0, 0.5);
-        }
-        #start-button button {
-            padding: 20px;
-            font-size: 2em;
-            background: #FFD700;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            text-shadow: 1px 1px 2px #000;
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
         }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="start-button">
-        <button onclick="initGame()">Start $COFFEE TapGame</button>
+    <div id="start-button" onclick="initGame()">
+        <!-- Background image will act as start button -->
     </div>
     <div id="game-container">
         <h1>Tap the $COFFEE!</h1>
         <div class="image-container">
             <img id="coffeeCup" src="cup_empty.jpg" onclick="incrementScore()" alt="Coffee Cup">
             <div id="score">0</div>
+            <div id="plus-one">+1</div>
         </div>
         <div id="leaderboard">
             <h2><img src="trophy-icon.jpg" class="trophy-icon" alt="Trophy Icon"> Leaderboard</h2>
@@ -159,6 +165,7 @@
                 score++;
                 tapCount = 0; // Reset tap count after 5 taps
                 document.getElementById('score').innerText = score;
+                showPlusOne();
                 updateLeaderboard();
             }
         }
@@ -166,6 +173,14 @@
         function updateCupImage() {
             let imageIndex = Math.min(tapCount, 5); // Change image every tap, up to 5 taps
             document.getElementById('coffeeCup').src = cupImages[imageIndex];
+        }
+
+        function showPlusOne() {
+            const plusOne = document.getElementById('plus-one');
+            plusOne.style.opacity = 1; // Show the +1
+            setTimeout(() => {
+                plusOne.style.opacity = 0; // Hide the +1 after 0.5 seconds
+            }, 500);
         }
 
         function updateLeaderboard() {
