@@ -11,7 +11,7 @@
             align-items: center;
             height: 100vh;
             width: 100vw;
-            background: url('background_body.jpg') no-repeat center center fixed;
+            background: url('background.jpg') no-repeat center center fixed; /* Initial background */
             background-size: cover;
             font-family: Arial, sans-serif;
         }
@@ -115,7 +115,7 @@
             align-items: center;
             height: 100vh;
             width: 100vw;
-            background: url('background.png') no-repeat center center fixed;
+            background: url('background.jpg') no-repeat center center fixed; /* Background for the start button */
             background-size: cover;
         }
     </style>
@@ -156,6 +156,9 @@
             playerName = Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.username : 'Player';
             document.getElementById('start-button').style.display = 'none';
             document.getElementById('game-container').style.display = 'flex';
+            document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
+            document.body.style.backgroundSize = "cover";
+            restoreScore();
         }
 
         function incrementScore() {
@@ -166,6 +169,7 @@
                 tapCount = 0; // Reset tap count after 5 taps
                 document.getElementById('score').innerText = score;
                 showPlusOne();
+                saveScore();
                 updateLeaderboard();
             }
         }
@@ -202,6 +206,15 @@
                 li.textContent = `${rank} : ${player.name} - ${player.score}`;
                 leaderboardList.appendChild(li);
             });
+        }
+
+        function saveScore() {
+            localStorage.setItem('player_' + playerName + '_score', score);
+        }
+
+        function restoreScore() {
+            score = parseInt(localStorage.getItem('player_' + playerName + '_score')) || 0;
+            document.getElementById('score').innerText = score;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
