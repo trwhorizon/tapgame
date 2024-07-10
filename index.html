@@ -14,10 +14,6 @@
             background: url('background.jpg') no-repeat center center fixed; /* Initial background */
             background-size: cover;
             font-family: Arial, sans-serif;
-            -webkit-touch-callout: none; /* Disable callout, long press menus */
-            -webkit-user-select: none; /* Disable selection/copy of text */
-            -webkit-tap-highlight-color: transparent; /* Remove blue filter on tap */
-            touch-action: manipulation; /* Disable zoom on double tap */
         }
         #game-container {
             display: none; /* Hide the game container initially */
@@ -43,11 +39,12 @@
             max-width: 80vw;
             object-fit: contain; /* Maintain aspect ratio */
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent; /* Remove blue filter on tap */
         }
         #score {
             position: absolute;
-            top: 80px; /* Adjust as needed */
-            left: 50%; /* Adjust as needed */
+            top: 50px; /* Adjust as needed */
+            left: 55%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: #FFD700; /* Softer yellow color */
@@ -56,8 +53,8 @@
         }
         #plus-one {
             position: absolute;
-            top: 120px; /* Adjust as needed */
-            left: 50%; /* Adjust as needed */
+            top: 55px; /* Adjust as needed */
+            left: 75%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: green; /* Green color */
@@ -138,27 +135,27 @@
             background: url('background.jpg') no-repeat center center fixed; /* Background for the start button */
             background-size: cover;
         }
+        
+        /* Adjustments for iPhone */
+        @media screen and (max-width: 768px) {
+            #score {
+                top: 80px; /* Move down the score */
+                font-size: 1.8em; /* Slightly smaller font size */
+            }
+            #plus-one {
+                top: 85px; /* Move down the plus-one */
+                font-size: 1.8em; /* Slightly smaller font size */
+            }
+            h1 {
+                font-size: 2.5em; /* Adjust title size */
+            }
+            #leaderboard {
+                width: 90%; /* Increase width for leaderboard */
+                font-size: 1.2em; /* Adjust font size for leaderboard */
+            }
+        }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body>
-    <div id="start-button" onclick="initGame()">
-        <!-- Background image will act as start button -->
-    </div>
-    <div id="game-container">
-        <h1>Tap the $COFFEE!</h1>
-        <div class="image-container">
-            <img id="coffeeCup" src="cup_empty.jpg" onclick="incrementScore()" alt="Coffee Cup">
-            <div id="score">0</div>
-            <div id="plus-one">+1</div>
-            <div id="good-job">Good Job!</div>
-        </div>
-        <div id="leaderboard">
-            <h2><img src="trophy-icon.jpg" class="trophy-icon" alt="Trophy Icon"> Leaderboard</h2>
-            <ul id="leaderboard-list"></ul>
-        </div>
-    </div>
-
     <script>
         let score = 0;
         let tapCount = 0; // Counter for taps
@@ -224,7 +221,7 @@
             leaderboard = leaderboard.filter(player => player.name !== playerName);
             leaderboard.push({ name: playerName, score: score });
             leaderboard.sort((a, b) => b.score - a.score);
-                        leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
+            leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
             localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
             displayLeaderboard(leaderboard);
         }
@@ -235,7 +232,7 @@
             leaderboard.forEach((player, index) => {
                 const li = document.createElement('li');
                 const rank = index === 0 ? '1er' : `${index + 1}ème`;
-                li.textContent = `${rank} : ${player.name} - ${player.score}`;
+                                li.textContent = `${rank} : ${player.name} - ${player.score}`;
                 leaderboardList.appendChild(li);
             });
         }
@@ -261,6 +258,12 @@
         document.addEventListener('dblclick', function(event) {
             event.preventDefault();
         });
+
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
