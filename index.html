@@ -5,7 +5,7 @@
     <style>
 
 
-body {
+        body {
             margin: 0;
             padding: 0;
             display: flex;
@@ -46,8 +46,8 @@ body {
         }
         #score {
             position: absolute;
-            top: 3vh; /* Adjust as needed */
-            left: 55%; /* Adjust as needed */
+            top: 5vh; /* Adjust as needed */
+            left: 50%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: #FFD700; /* Softer yellow color */
@@ -56,8 +56,8 @@ body {
         }
         #plus-one {
             position: absolute;
-            top: 3vh; /* Adjust as needed */
-            left: 75%; /* Adjust as needed */
+            top: 10vh; /* Adjust as needed */
+            left: 50%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: green; /* Green color */
@@ -140,21 +140,21 @@ body {
         }
 
         /* Media query to ensure same design on all devices */
-        @media screen and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait) {
+        @media screen and (min-device-width: 375px) and (max-device-width: 414px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait) {
             #score {
-                top: 3vh; /* Adjust the position for iPhone */
-                left: 55vh; /* Adjust the position for iPhone */
+                top: 5vh; /* Adjust the position for iPhone */
+                left: 50%; /* Adjust the position for iPhone */
             }
             #plus-one {
-                top: 3vh; /* Adjust the position for iPhone */
-                left: 75vh; /* Adjust the position for iPhone */
+                top: 10vh; /* Adjust the position for iPhone */
+                left: 50%; /* Adjust the position for iPhone */
             }
             h1 {
-                font-size: 5em; /* Adjust the title size for iPhone */
+                font-size: 3em; /* Adjust the title size for iPhone */
             }
             #leaderboard {
-                width: 95%; /* Adjust the leaderboard width for iPhone */
-                max-width: 400px; /* Adjust the max-width for iPhone */
+                width: 90%; /* Adjust the leaderboard width for iPhone */
+                max-width: 350px; /* Adjust the max-width for iPhone */
             }
         }
 
