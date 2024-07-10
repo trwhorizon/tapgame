@@ -43,6 +43,7 @@
             max-width: 80vw;
             object-fit: contain; /* Maintain aspect ratio */
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent; /* Remove blue filter on tap */
         }
         #score {
             position: absolute;
@@ -138,6 +139,26 @@
             background: url('background.jpg') no-repeat center center fixed; /* Background for the start button */
             background-size: cover;
         }
+
+        /* Specific styles for iPhone */
+        @media only screen and (max-width: 600px) and (max-height: 800px) {
+            #score {
+                top: 50px; /* Adjust for iPhone */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            #plus-one {
+                top: 100px; /* Adjust for iPhone */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            h1 {
+                font-size: 2em; /* Adjust title size for iPhone */
+            }
+            #leaderboard {
+                font-size: 0.8em; /* Adjust leaderboard size for iPhone */
+            }
+        }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -208,7 +229,7 @@
             plusOne.style.opacity = 1; // Show the +1
             setTimeout(() => {
                 plusOne.style.opacity = 0; // Hide the +1 after 0.5 seconds
-            }, 500);
+                        }, 500);
         }
 
         function showGoodJob() {
@@ -224,7 +245,7 @@
             leaderboard = leaderboard.filter(player => player.name !== playerName);
             leaderboard.push({ name: playerName, score: score });
             leaderboard.sort((a, b) => b.score - a.score);
-                        leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
+            leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
             localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
             displayLeaderboard(leaderboard);
         }
@@ -254,13 +275,21 @@
             displayLeaderboard(leaderboard);
         });
 
-        document.addEventListener('touchmove', function(event) {
-            if (event.scale !== 1) { event.preventDefault(); }
+        // Disable zoom on double-tap for iPhone
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
         }, { passive: false });
 
-        document.addEventListener('dblclick', function(event) {
-            event.preventDefault();
-        });
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 </html>
