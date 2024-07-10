@@ -136,6 +136,24 @@
             background: url('background.jpg') no-repeat center center fixed; /* Background for the start button */
             background-size: cover;
         }
+
+        /* Add this to the end of your CSS */
+@media screen and (max-width: 600px) { /* Adjust the max-width value if needed */
+    #score {
+        top: 50px; /* Adjust the position for iPhone */
+    }
+    #plus-one {
+        top: 70px; /* Adjust the position for iPhone */
+    }
+    h1 {
+        font-size: 2.5em; /* Adjust the title size for iPhone */
+    }
+    #leaderboard {
+        width: 90%; /* Adjust the leaderboard width for iPhone */
+        max-width: 350px; /* Adjust the max-width for iPhone */
+    }
+}
+
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
