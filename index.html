@@ -137,8 +137,8 @@
             background-size: cover;
         }
 
-        /* Add this to the end of your CSS */
-@media screen and (max-width: 700px) { /* Adjust the max-width value if needed */
+/* Add this to the end of your CSS */
+@media screen and (max-width: 600px) and (-webkit-min-device-pixel-ratio: 2) and (min-device-width: 375px) {
     #score {
         top: 50px; /* Adjust the position for iPhone */
     }
@@ -153,6 +153,8 @@
         max-width: 350px; /* Adjust the max-width for iPhone */
     }
 }
+
+        
 
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
