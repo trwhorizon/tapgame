@@ -186,23 +186,26 @@
             document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
             document.body.style.backgroundSize = "cover";
             restoreScore();
+            setInterval(fetchLeaderboardFromServer, 60000); // Update leaderboard every minute
+            fetchLeaderboardFromServer(); // Initial fetch
         }
 
-        function incrementScore() {
-            tapCount++;
-            updateCupImage();
-            if (tapCount >= 5) {
-                score++;
-                tapCount = 0; // Reset tap count after 5 taps
-                document.getElementById('score').innerText = score;
-                showPlusOne();
-                saveScore();
-                updateLeaderboard();
-                if (score % 10 === 0) {
-                    showGoodJob();
-                }
-            }
+function incrementScore() {
+    tapCount++;
+    updateCupImage();
+    if (tapCount >= 5) {
+        score++;
+        tapCount = 0; // Reset tap count after 5 taps
+        document.getElementById('score').innerText = score;
+        showPlusOne();
+        saveScore();
+        sendScoreToServer(); // Send score to server
+        if (score % 10 === 0) {
+            showGoodJob();
         }
+    }
+}
+
 
         function updateCupImage() {
             let imageIndex = Math.min(tapCount, 5); // Change image every tap, up to 5 taps
@@ -254,6 +257,51 @@
             score = parseInt(localStorage.getItem('player_' + playerName + '_score')) || 0;
             document.getElementById('score').innerText = score;
         }
+
+
+
+
+
+
+        const apiUrl = 'https://api.sheety.co/a97560073a278d79eaceb3f30e584c29/leaderboard/leaderboardsheet';
+
+function sendScoreToServer() {
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            leaderboardsheet: {
+                username: playerName,
+                score: score,
+                timestamp: new Date().toISOString()
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Score sent successfully:', data);
+        updateLeaderboard();
+    })
+    .catch(error => {
+        console.error('Error sending score:', error);
+    });
+}
+
+function fetchLeaderboardFromServer() {
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const leaderboard = data.leaderboardsheet;
+            displayLeaderboard(leaderboard);
+        })
+        .catch(error => {
+            console.error('Error fetching leaderboard:', error);
+        });
+}
+
+        
 
         document.addEventListener('DOMContentLoaded', () => {
             const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
