@@ -3,155 +3,154 @@
 <head>
     <title>$COFFEE TapGame</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100vw;
-            background: url('background.jpg') no-repeat center center fixed; /* Initial background */
-            background-size: cover;
-            font-family: Arial, sans-serif;
-            touch-action: manipulation; /* Disable zoom on double tap */
-        }
-        #game-container {
-            display: none; /* Hide the game container initially */
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            margin-top: 100px; /* Increase margin to move the image further down */
-            text-align: center; /* Center the text */
-        }
-        .image-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 70%; /* Adjust height to ensure space for the image */
-            position: relative;
-        }
-        #coffeeCup {
-            width: auto;
-            max-height: 100%;
-            max-width: 80vw;
-            object-fit: contain; /* Maintain aspect ratio */
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Remove blue filter on tap */
-        }
-        #score {
-            position: absolute;
-            top: 26px; /* Adjust as needed */
-            left: 55%; /* Adjust as needed */
-            transform: translateX(-50%);
-            font-size: 2em;
-            color: #FFD700; /* Softer yellow color */
-            text-shadow: 1px 1px 2px #000; /* Add a subtle shadow for better readability */
-            z-index: 1;
-        }
-        #plus-one {
-            position: absolute;
-            top: 30px; /* Adjust as needed */
-            left: 75%; /* Adjust as needed */
-            transform: translateX(-50%);
-            font-size: 2em;
-            color: green; /* Green color */
-            text-shadow: 1px 1px 2px #000; /* Add a subtle shadow for better readability */
-            z-index: 1;
-            opacity: 0; /* Initially invisible */
-            transition: opacity 0.5s ease-out;
-        }
-        #good-job {
-            position: absolute;
-            top: 50%; /* Adjust as needed */
-            left: 50%; /* Adjust as needed */
-            transform: translate(-50%, -50%);
-            font-size: 3em;
-            color: #FFD700; /* Yellow color */
-            text-shadow: 3px 3px 6px #000, -1px -1px 2px #000; /* Enhanced shadow for better readability */
-            border: 3px solid #FFD700; /* Border for a more distinct appearance */
-            border-radius: 10px; /* Rounded corners */
-            padding: 10px 20px; /* Padding around the text */
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            z-index: 1;
-            opacity: 0; /* Initially invisible */
-            transition: opacity 1s ease-out;
-        }
-        #leaderboard {
-            margin-top: 30px;
-            color: #FFD700; /* Softer yellow color */
-            padding: 10px;
-            border-radius: 10px;
-            background: white; /* White background */
-            background-clip: padding-box;
-            border: 4px solid transparent;
-            border-image: linear-gradient(to right, #FFD700, #FFFACD); /* Gradient border */
-            border-image-slice: 1;
-            width: 80%;
-            max-width: 400px;
-            text-align: left; /* Align text to the left */
-        }
-        #leaderboard h2 {
-            text-align: center; /* Center the text */
-        }
-        h1 {
-            color: #FFD700; /* Softer yellow color */
-            text-shadow: 2px 2px 4px #000; /* Add a more prominent shadow for better readability */
-            font-size: 3em;
-            font-weight: bold;
-            margin: 0;
-        }
-        h1::after {
-            content: "";
-            display: block;
-            width: 50%;
-            height: 2px;
-            background: #000;
-            margin: 10px auto; /* Add space below the title */
-        }
-        .trophy-icon {
-            width: 40px; /* Increased size */
-            height: 40px; /* Increased size */
-            vertical-align: middle;
-            margin-right: 5px;
-        }
-        #leaderboard-list {
-            padding-left: 20px; /* Indent list items */
-        }
-        #leaderboard-list li {
-            list-style: none;
-            padding: 5px 0;
-            border-bottom: 1px solid #ddd; /* Light grey border for a modern look */
-            font-weight: bold; /* Make list items bold */
-        }
-        #start-button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100vw;
-            background: url('background.jpg') no-repeat center center fixed; /* Background for the start button */
-            background-size: cover;
-        }
 
-/* Add this to the end of your CSS */
-@media screen and (max-device-width: 812px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait) {
-    #score {
-        top: 1px; /* Adjust the position for iPhone */
-    }
-    #plus-one {
-        top: 70px; /* Adjust the position for iPhone */
-    }
-    h1 {
-        font-size: 2.5em; /* Adjust the title size for iPhone */
-    }
-    #leaderboard {
-        width: 90%; /* Adjust the leaderboard width for iPhone */
-        max-width: 350px; /* Adjust the max-width for iPhone */
-    }
+
+        body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: url('background.jpg') no-repeat center center fixed; /* Initial background */
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    touch-action: manipulation; /* Disable zoom on double tap */
+}
+
+#game-container {
+    display: none; /* Hide the game container initially */
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin-top: 10vh; /* Increase margin to move the image further down */
+    text-align: center; /* Center the text */
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 70%; /* Adjust height to ensure space for the image */
+    position: relative;
+}
+
+#coffeeCup {
+    width: auto;
+    max-height: 100%;
+    max-width: 80vw;
+    object-fit: contain; /* Maintain aspect ratio */
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent; /* Remove blue filter on tap */
+}
+
+#score {
+    position: absolute;
+    top: 5vh; /* Adjust as needed */
+    left: 55%; /* Adjust as needed */
+    transform: translateX(-50%);
+    font-size: 2em;
+    color: #FFD700; /* Softer yellow color */
+    text-shadow: 1px 1px 2px #000; /* Add a subtle shadow for better readability */
+    z-index: 1;
+}
+
+#plus-one {
+    position: absolute;
+    top: 8vh; /* Adjust as needed */
+    left: 55%; /* Adjust as needed */
+    transform: translateX(-50%);
+    font-size: 2em;
+    color: green; /* Green color */
+    text-shadow: 1px 1px 2px #000; /* Add a subtle shadow for better readability */
+    z-index: 1;
+    opacity: 0; /* Initially invisible */
+    transition: opacity 0.5s ease-out;
+}
+
+#good-job {
+    position: absolute;
+    top: 50%; /* Adjust as needed */
+    left: 50%; /* Adjust as needed */
+    transform: translate(-50%, -50%);
+    font-size: 3em;
+    color: #FFD700; /* Yellow color */
+    text-shadow: 3px 3px 6px #000, -1px -1px 2px #000; /* Enhanced shadow for better readability */
+    border: 3px solid #FFD700; /* Border for a more distinct appearance */
+    border-radius: 10px; /* Rounded corners */
+    padding: 10px 20px; /* Padding around the text */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 1;
+    opacity: 0; /* Initially invisible */
+    transition: opacity 1s ease-out;
+}
+
+#leaderboard {
+    margin-top: 5vh;
+    color: #FFD700; /* Softer yellow color */
+    padding: 10px;
+    border-radius: 10px;
+    background: white; /* White background */
+    background-clip: padding-box;
+    border: 4px solid transparent;
+    border-image: linear-gradient(to right, #FFD700, #FFFACD); /* Gradient border */
+    border-image-slice: 1;
+    width: 80%;
+    max-width: 400px;
+    text-align: left; /* Align text to the left */
+}
+
+#leaderboard h2 {
+    text-align: center; /* Center the text */
+}
+
+h1 {
+    color: #FFD700; /* Softer yellow color */
+    text-shadow: 2px 2px 4px #000; /* Add a more prominent shadow for better readability */
+    font-size: 3em;
+    font-weight: bold;
+    margin: 0;
+}
+
+h1::after {
+    content: "";
+    display: block;
+    width: 50%;
+    height: 2px;
+    background: #000;
+    margin: 10px auto; /* Add space below the title */
+}
+
+.trophy-icon {
+    width: 40px; /* Increased size */
+    height: 40px; /* Increased size */
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+#leaderboard-list {
+    padding-left: 20px; /* Indent list items */
+}
+
+#leaderboard-list li {
+    list-style: none;
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd; /* Light grey border for a modern look */
+    font-weight: bold; /* Make list items bold */
+}
+
+#start-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: url('background.jpg') no-repeat center center fixed; /* Background for the start button */
+    background-size: cover;
 }
 
         
