@@ -14,10 +14,6 @@
             background: url('background.jpg') no-repeat center center fixed; /* Initial background */
             background-size: cover;
             font-family: Arial, sans-serif;
-            -webkit-touch-callout: none; /* Disable callout, long press menus */
-            -webkit-user-select: none; /* Disable selection/copy of text */
-            -webkit-tap-highlight-color: transparent; /* Remove blue filter on tap */
-            touch-action: manipulation; /* Disable zoom on double tap */
         }
         #game-container {
             display: none; /* Hide the game container initially */
@@ -43,11 +39,12 @@
             max-width: 80vw;
             object-fit: contain; /* Maintain aspect ratio */
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent; /* Remove blue filter on tap */
         }
         #score {
             position: absolute;
-            top: 120px; /* Adjust as needed */
-            left: 50%; /* Adjust as needed */
+            top: 26px; /* Adjust as needed */
+            left: 55%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: #FFD700; /* Softer yellow color */
@@ -56,8 +53,8 @@
         }
         #plus-one {
             position: absolute;
-            top: 160px; /* Adjust as needed */
-            left: 50%; /* Adjust as needed */
+            top: 30px; /* Adjust as needed */
+            left: 75%; /* Adjust as needed */
             transform: translateX(-50%);
             font-size: 2em;
             color: green; /* Green color */
@@ -95,7 +92,6 @@
             width: 80%;
             max-width: 400px;
             text-align: left; /* Align text to the left */
-            overflow-y: auto; /* Enable scrolling */
         }
         #leaderboard h2 {
             text-align: center; /* Center the text */
@@ -159,6 +155,7 @@
             <ul id="leaderboard-list"></ul>
         </div>
     </div>
+
     <script>
         let score = 0;
         let tapCount = 0; // Counter for taps
@@ -230,10 +227,10 @@
         }
 
         function displayLeaderboard(leaderboard) {
-                        const leaderboardList = document.getElementById('leaderboard-list');
+            const leaderboardList = document.getElementById('leaderboard-list');
             leaderboardList.innerHTML = '';
             leaderboard.forEach((player, index) => {
-                const li = document.createElement('li');
+                                const li = document.createElement('li');
                 const rank = index === 0 ? '1er' : `${index + 1}ème`;
                 li.textContent = `${rank} : ${player.name} - ${player.score}`;
                 leaderboardList.appendChild(li);
@@ -252,14 +249,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
             displayLeaderboard(leaderboard);
-        });
-
-        document.addEventListener('touchmove', function(event) {
-            if (event.scale !== 1) { event.preventDefault(); }
-        }, { passive: false });
-
-        document.addEventListener('dblclick', function(event) {
-            event.preventDefault();
         });
     </script>
 </body>
