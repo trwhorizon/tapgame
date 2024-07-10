@@ -224,7 +224,7 @@
             leaderboard = leaderboard.filter(player => player.name !== playerName);
             leaderboard.push({ name: playerName, score: score });
             leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
+                        leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
             localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
             displayLeaderboard(leaderboard);
         }
