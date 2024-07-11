@@ -188,6 +188,7 @@
         document.body.style.backgroundSize = "cover";
         restoreScore();
         fetchLeaderboardFromServer(); // Fetch leaderboard at game init
+        setInterval(sendScoreToServer, 60000); // Send score to server every minute
     }
 
     function incrementScore() {
@@ -229,27 +230,40 @@
 
     function sendScoreToServer() {
         console.log(`Sending score: ${score} for player: ${playerName}`);
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                leaderboardsheet: {
-                    username: playerName,
-                    score: score,
-                    timestamp: new Date().toISOString()
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const leaderboard = data.leaderboardsheet;
+                const existingPlayer = leaderboard.find(entry => entry.username === playerName);
+
+                if (!existingPlayer || existingPlayer.score < score) {
+                    // If the player doesn't exist or the new score is higher, send the new score
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            leaderboardsheet: {
+                                username: playerName,
+                                score: score,
+                                timestamp: new Date().toISOString()
+                            }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Score sent successfully:', data);
+                        fetchLeaderboardFromServer();
+                    })
+                    .catch(error => {
+                        console.error('Error sending score:', error);
+                    });
                 }
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Score sent successfully:', data);
-            fetchLeaderboardFromServer();
-        })
-        .catch(error => {
-            console.error('Error sending score:', error);
-        });
+            .catch(error => {
+                console.error('Error fetching leaderboard:', error);
+            });
     }
 
     function fetchLeaderboardFromServer() {
@@ -302,6 +316,7 @@
         fetchLeaderboardFromServer();
     });
 </script>
+
 
 
 
