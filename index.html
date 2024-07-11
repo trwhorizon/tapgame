@@ -182,6 +182,7 @@
     function initGame() {
         Telegram.WebApp.ready();
         playerName = Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.username : 'Player';
+        console.log('Player Name:', playerName);
         document.getElementById('start-button').style.display = 'none';
         document.getElementById('game-container').style.display = 'flex';
         document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
@@ -192,21 +193,21 @@
     }
 
     function incrementScore() {
-    tapCount++;
-    updateCupImage();
-    if (tapCount >= 5) {
-        score++;
-        tapCount = 0; // Reset tap count after 5 taps
-        document.getElementById('score').innerText = score;
-        showPlusOne();
-        saveScore();
-        sendScoreToServer(); // Send score to server
-        if (score % 10 === 0) {
-            showGoodJob();
+        tapCount++;
+        updateCupImage();
+        if (tapCount >= 5) {
+            score++;
+            tapCount = 0; // Reset tap count after 5 taps
+            document.getElementById('score').innerText = score;
+            console.log('Score updated:', score);
+            showPlusOne();
+            saveScore();
+            sendScoreToServer(); // Send score to server
+            if (score % 10 === 0) {
+                showGoodJob();
+            }
         }
     }
-}
-
 
     function updateCupImage() {
         let imageIndex = Math.min(tapCount, 5); // Change image every tap, up to 5 taps
@@ -230,63 +231,66 @@
     }
 
     function sendScoreToServer() {
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            leaderboardsheet: {
-                username: playerName,
-                score: score,
-                timestamp: new Date().toISOString()
-            }
+        console.log('Sending score to server:', score);
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                leaderboardsheet: {
+                    username: playerName,
+                    score: score,
+                    timestamp: new Date().toISOString()
+                }
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Score sent successfully:', data);
-        updateLeaderboard();
-    })
-    .catch(error => {
-        console.error('Error sending score:', error);
-    });
-}
-
-    function fetchLeaderboardFromServer() {
-    fetch(apiUrl)
-        .then(response => response.json())
+        .then(response => {
+            console.log('Server response:', response);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
-            const leaderboard = data.leaderboardsheet;
-            displayLeaderboard(leaderboard);
+            console.log('Score sent successfully:', data);
+            fetchLeaderboardFromServer(); // Fetch the updated leaderboard
         })
         .catch(error => {
-            console.error('Error fetching leaderboard:', error);
+            console.error('Error sending score:', error);
         });
-}
+    }
 
-
-    function filterAndKeepMaxScore(leaderboard) {
-        const playerScores = {};
-        leaderboard.forEach(entry => {
-            if (!playerScores[entry.username] || playerScores[entry.username].score < entry.score) {
-                playerScores[entry.username] = entry;
-            }
-        });
-        return Object.values(playerScores).sort((a, b) => b.score - a.score);
+    function fetchLeaderboardFromServer() {
+        console.log('Fetching leaderboard from server...');
+        fetch(apiUrl)
+            .then(response => {
+                console.log('Server response:', response);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Leaderboard fetched:', data);
+                const leaderboard = data.leaderboardsheet;
+                displayLeaderboard(leaderboard);
+            })
+            .catch(error => {
+                console.error('Error fetching leaderboard:', error);
+            });
     }
 
     function displayLeaderboard(leaderboard) {
-    const leaderboardList = document.getElementById('leaderboard-list');
-    leaderboardList.innerHTML = '';
-    leaderboard.forEach((player, index) => {
-        const li = document.createElement('li');
-        const rank = index === 0 ? '1er' : `${index + 1}ème`;
-        li.textContent = `${rank} : ${player.username} - ${player.score}`;
-        leaderboardList.appendChild(li);
-    });
-}
-
+        const leaderboardList = document.getElementById('leaderboard-list');
+        leaderboardList.innerHTML = '';
+        leaderboard.forEach((player, index) => {
+            const li = document.createElement('li');
+            const rank = index === 0 ? '1er' : `${index + 1}ème`;
+            li.textContent = `${rank} : ${player.username} - ${player.score}`;
+            leaderboardList.appendChild(li);
+        });
+    }
 
     function saveScore() {
         localStorage.setItem('player_' + playerName + '_score', score);
@@ -298,10 +302,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        restoreScore();
-        fetchLeaderboardFromServer();
+        const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        displayLeaderboard(leaderboard);
     });
 </script>
+
 
 
 
