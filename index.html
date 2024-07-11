@@ -187,6 +187,7 @@
         document.getElementById('game-container').style.display = 'flex';
         document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
+        fetchScoreFromServer(); // Fetch the score for the current player
         setInterval(sendScoreToServer, 10000); // Send score to server every 10 seconds
         fetchLeaderboardFromServer(); // Initial fetch
     }
@@ -252,6 +253,22 @@
                 console.error('Error sending score:', error);
             });
         }
+    }
+
+    function fetchScoreFromServer() {
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const leaderboard = data.leaderboardsheet;
+                const playerEntry = leaderboard.find(entry => entry.username === playerName);
+                if (playerEntry) {
+                    score = playerEntry.score;
+                    document.getElementById('score').innerText = score;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching score:', error);
+            });
     }
 
     function fetchLeaderboardFromServer() {
