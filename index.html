@@ -165,7 +165,7 @@
         </div>
     </div>
 
-    <script>
+<script>
     let score = 0;
     let tapCount = 0; // Counter for taps
     let playerName = '';
@@ -199,7 +199,6 @@
             showPlusOne();
             saveScore();
             sendScoreToServer();
-            updateLeaderboard();
             if (score % 10 === 0) {
                 showGoodJob();
             }
@@ -274,10 +273,6 @@
         return Object.values(playerScores).sort((a, b) => b.score - a.score);
     }
 
-    function updateLeaderboard() {
-        fetchLeaderboardFromServer();
-    }
-
     function displayLeaderboard(leaderboard) {
         const leaderboardList = document.getElementById('leaderboard-list');
         leaderboardList.innerHTML = '';
@@ -299,10 +294,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-        displayLeaderboard(leaderboard);
+        fetchLeaderboardFromServer(); // Fetch the leaderboard when the page is loaded
     });
 </script>
+
 
 </body>
 </html>
