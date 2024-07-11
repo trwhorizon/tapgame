@@ -188,8 +188,10 @@
         document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
         fetchScoreFromServer(); // Fetch the score for the current player
-        setInterval(sendScoreToServer, 10000); // Send score to server every 10 seconds
         fetchLeaderboardFromServer(); // Initial fetch
+
+        // Add event listener for page unload
+        window.addEventListener('beforeunload', sendFinalScoreToServer);
     }
 
     function incrementScore() {
@@ -201,7 +203,6 @@
             document.getElementById('score').innerText = score;
             console.log('Score updated:', score);
             showPlusOne();
-            sendScoreToServer(); // Send score to server
             if (score % 10 === 0) {
                 showGoodJob();
             }
@@ -229,72 +230,29 @@
         }, 1000);
     }
 
-    function sendScoreToServer() {
+    function sendFinalScoreToServer() {
         if (playerName && score > 0) {
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const leaderboard = data.leaderboardsheet;
-                    const playerEntry = leaderboard.find(entry => entry.username === playerName);
-                    if (playerEntry) {
-                        if (playerEntry.score < score) {
-                            updateScoreOnServer(playerEntry.id); // Update score if the current score is higher
-                        }
-                    } else {
-                        postNewScoreToServer(); // Add new score if the player does not exist
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    leaderboardsheet: {
+                        username: playerName,
+                        score: score,
+                        timestamp: new Date().toISOString()
                     }
                 })
-                .catch(error => {
-                    console.error('Error fetching leaderboard:', error);
-                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Final score sent successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error sending final score:', error);
+            });
         }
-    }
-
-    function postNewScoreToServer() {
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                leaderboardsheet: {
-                    username: playerName,
-                    score: score,
-                    timestamp: new Date().toISOString()
-                }
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Score sent successfully:', data);
-            fetchLeaderboardFromServer();
-        })
-        .catch(error => {
-            console.error('Error sending score:', error);
-        });
-    }
-
-    function updateScoreOnServer(playerId) {
-        fetch(`${apiUrl}/${playerId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                leaderboardsheet: {
-                    score: score,
-                    timestamp: new Date().toISOString()
-                }
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Score updated successfully:', data);
-            fetchLeaderboardFromServer();
-        })
-        .catch(error => {
-            console.error('Error updating score:', error);
-        });
     }
 
     function fetchScoreFromServer() {
@@ -351,6 +309,7 @@
         fetchLeaderboardFromServer(); // Initial fetch on load
     });
 </script>
+
 
 
 
