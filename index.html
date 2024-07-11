@@ -187,8 +187,7 @@
         document.getElementById('game-container').style.display = 'flex';
         document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
-        restoreScore();
-        setInterval(fetchLeaderboardFromServer, 60000); // Update leaderboard every minute
+        setInterval(sendScoreToServer, 10000); // Send score to server every 10 seconds
         fetchLeaderboardFromServer(); // Initial fetch
     }
 
@@ -201,7 +200,6 @@
             document.getElementById('score').innerText = score;
             console.log('Score updated:', score);
             showPlusOne();
-            saveScore();
             sendScoreToServer(); // Send score to server
             if (score % 10 === 0) {
                 showGoodJob();
@@ -231,54 +229,52 @@
     }
 
     function sendScoreToServer() {
-        console.log('Sending score to server:', score);
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                leaderboardsheet: {
-                    username: playerName,
-                    score: score,
-                    timestamp: new Date().toISOString()
-                }
+        if (playerName && score > 0) {
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    leaderboardsheet: {
+                        username: playerName,
+                        score: score,
+                        timestamp: new Date().toISOString()
+                    }
+                })
             })
-        })
-        .then(response => {
-            console.log('Server response:', response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Score sent successfully:', data);
-            fetchLeaderboardFromServer(); // Fetch the updated leaderboard
-        })
-        .catch(error => {
-            console.error('Error sending score:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log('Score sent successfully:', data);
+                fetchLeaderboardFromServer();
+            })
+            .catch(error => {
+                console.error('Error sending score:', error);
+            });
+        }
     }
 
     function fetchLeaderboardFromServer() {
-        console.log('Fetching leaderboard from server...');
         fetch(apiUrl)
-            .then(response => {
-                console.log('Server response:', response);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log('Leaderboard fetched:', data);
                 const leaderboard = data.leaderboardsheet;
-                displayLeaderboard(leaderboard);
+                const filteredLeaderboard = filterAndKeepMaxScore(leaderboard);
+                displayLeaderboard(filteredLeaderboard);
             })
             .catch(error => {
                 console.error('Error fetching leaderboard:', error);
             });
+    }
+
+    function filterAndKeepMaxScore(leaderboard) {
+        const playerScores = {};
+        leaderboard.forEach(entry => {
+            if (!playerScores[entry.username] || playerScores[entry.username].score < entry.score) {
+                playerScores[entry.username] = entry;
+            }
+        });
+        return Object.values(playerScores).sort((a, b) => b.score - a.score);
     }
 
     function displayLeaderboard(leaderboard) {
@@ -292,20 +288,11 @@
         });
     }
 
-    function saveScore() {
-        localStorage.setItem('player_' + playerName + '_score', score);
-    }
-
-    function restoreScore() {
-        score = parseInt(localStorage.getItem('player_' + playerName + '_score')) || 0;
-        document.getElementById('score').innerText = score;
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-        const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-        displayLeaderboard(leaderboard);
+        fetchLeaderboardFromServer(); // Initial fetch on load
     });
 </script>
+
 
 
 
