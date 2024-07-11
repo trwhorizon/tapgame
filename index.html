@@ -187,6 +187,7 @@
         document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
         restoreScore();
+        fetchLeaderboardFromServer(); // Fetch leaderboard at game init
     }
 
     function incrementScore() {
@@ -227,6 +228,7 @@
     }
 
     function sendScoreToServer() {
+        console.log(`Sending score: ${score} for player: ${playerName}`);
         fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -251,11 +253,12 @@
     }
 
     function fetchLeaderboardFromServer() {
+        console.log('Fetching leaderboard from server...');
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
+                console.log('Fetched leaderboard data:', data);
                 const leaderboard = data.leaderboardsheet;
-                console.log('Fetched leaderboard:', leaderboard);
                 const filteredLeaderboard = filterAndKeepMaxScore(leaderboard);
                 displayLeaderboard(filteredLeaderboard);
             })
@@ -295,9 +298,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        fetchLeaderboardFromServer(); // Fetch the leaderboard when the page is loaded
+        restoreScore();
+        fetchLeaderboardFromServer();
     });
 </script>
+
 
 
 
