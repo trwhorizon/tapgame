@@ -187,25 +187,26 @@
         document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
         document.body.style.backgroundSize = "cover";
         restoreScore();
-        fetchLeaderboardFromServer(); // Fetch leaderboard at game init
-        setInterval(sendScoreToServer, 60000); // Send score to server every minute
+        setInterval(fetchLeaderboardFromServer, 60000); // Update leaderboard every minute
+        fetchLeaderboardFromServer(); // Initial fetch
     }
 
     function incrementScore() {
-        tapCount++;
-        updateCupImage();
-        if (tapCount >= 5) {
-            score++;
-            tapCount = 0; // Reset tap count after 5 taps
-            document.getElementById('score').innerText = score;
-            showPlusOne();
-            saveScore();
-            sendScoreToServer();
-            if (score % 10 === 0) {
-                showGoodJob();
-            }
+    tapCount++;
+    updateCupImage();
+    if (tapCount >= 5) {
+        score++;
+        tapCount = 0; // Reset tap count after 5 taps
+        document.getElementById('score').innerText = score;
+        showPlusOne();
+        saveScore();
+        sendScoreToServer(); // Send score to server
+        if (score % 10 === 0) {
+            showGoodJob();
         }
     }
+}
+
 
     function updateCupImage() {
         let imageIndex = Math.min(tapCount, 5); // Change image every tap, up to 5 taps
@@ -229,57 +230,41 @@
     }
 
     function sendScoreToServer() {
-        console.log(`Sending score: ${score} for player: ${playerName}`);
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                const leaderboard = data.leaderboardsheet;
-                const existingPlayer = leaderboard.find(entry => entry.username === playerName);
-
-                if (!existingPlayer || existingPlayer.score < score) {
-                    // If the player doesn't exist or the new score is higher, send the new score
-                    fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            leaderboardsheet: {
-                                username: playerName,
-                                score: score,
-                                timestamp: new Date().toISOString()
-                            }
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Score sent successfully:', data);
-                        fetchLeaderboardFromServer();
-                    })
-                    .catch(error => {
-                        console.error('Error sending score:', error);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching leaderboard:', error);
-            });
-    }
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            leaderboardsheet: {
+                username: playerName,
+                score: score,
+                timestamp: new Date().toISOString()
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Score sent successfully:', data);
+        updateLeaderboard();
+    })
+    .catch(error => {
+        console.error('Error sending score:', error);
+    });
+}
 
     function fetchLeaderboardFromServer() {
-        console.log('Fetching leaderboard from server...');
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Fetched leaderboard data:', data);
-                const leaderboard = data.leaderboardsheet;
-                const filteredLeaderboard = filterAndKeepMaxScore(leaderboard);
-                displayLeaderboard(filteredLeaderboard);
-            })
-            .catch(error => {
-                console.error('Error fetching leaderboard:', error);
-            });
-    }
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const leaderboard = data.leaderboardsheet;
+            displayLeaderboard(leaderboard);
+        })
+        .catch(error => {
+            console.error('Error fetching leaderboard:', error);
+        });
+}
+
 
     function filterAndKeepMaxScore(leaderboard) {
         const playerScores = {};
@@ -292,15 +277,16 @@
     }
 
     function displayLeaderboard(leaderboard) {
-        const leaderboardList = document.getElementById('leaderboard-list');
-        leaderboardList.innerHTML = '';
-        leaderboard.forEach((player, index) => {
-            const li = document.createElement('li');
-            const rank = index === 0 ? '1er' : `${index + 1}ème`;
-            li.textContent = `${rank} : ${player.username} - ${player.score}`;
-            leaderboardList.appendChild(li);
-        });
-    }
+    const leaderboardList = document.getElementById('leaderboard-list');
+    leaderboardList.innerHTML = '';
+    leaderboard.forEach((player, index) => {
+        const li = document.createElement('li');
+        const rank = index === 0 ? '1er' : `${index + 1}ème`;
+        li.textContent = `${rank} : ${player.username} - ${player.score}`;
+        leaderboardList.appendChild(li);
+    });
+}
+
 
     function saveScore() {
         localStorage.setItem('player_' + playerName + '_score', score);
