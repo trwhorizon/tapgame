@@ -255,6 +255,7 @@
             .then(response => response.json())
             .then(data => {
                 const leaderboard = data.leaderboardsheet;
+                console.log('Fetched leaderboard:', leaderboard);
                 const filteredLeaderboard = filterAndKeepMaxScore(leaderboard);
                 displayLeaderboard(filteredLeaderboard);
             })
@@ -297,6 +298,7 @@
         fetchLeaderboardFromServer(); // Fetch the leaderboard when the page is loaded
     });
 </script>
+
 
 
 </body>
