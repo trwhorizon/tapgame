@@ -332,17 +332,45 @@
         });
         return Object.values(playerScores).sort((a, b) => b.score - a.score);
     }
+function displayLeaderboard(leaderboard) {
+    const leaderboardList = document.getElementById('leaderboard-list');
+    leaderboardList.innerHTML = '';
 
-    function displayLeaderboard(leaderboard) {
-        const leaderboardList = document.getElementById('leaderboard-list');
-        leaderboardList.innerHTML = '';
-        leaderboard.forEach((player, index) => {
-            const li = document.createElement('li');
-            const rank = index === 0 ? '1er' : `${index + 1}ème`;
-            li.textContent = `${rank} : ${player.username} - ${player.score}`;
-            leaderboardList.appendChild(li);
-        });
-    }
+    leaderboard.forEach((player, index) => {
+        const li = document.createElement('li');
+        li.style.padding = '10px';
+        li.style.margin = '5px 0';
+        li.style.borderRadius = '8px';
+        li.style.backgroundColor = '#f8f9fa';
+        li.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.style.fontWeight = 'bold';
+        li.style.fontSize = '1.2em';
+
+        const rank = document.createElement('span');
+        rank.style.marginRight = '10px';
+        rank.style.color = index === 0 ? '#FFD700' : '#000'; // Gold color for the first place
+        rank.textContent = index === 0 ? '1st' : `${index + 1}th`;
+
+        const username = document.createElement('span');
+        username.style.flexGrow = '1';
+        username.style.textAlign = 'left';
+        username.textContent = player.username;
+
+        const score = document.createElement('span');
+        score.style.color = '#28a745'; // Green color for the score
+        score.textContent = player.score;
+
+        li.appendChild(rank);
+        li.appendChild(username);
+        li.appendChild(score);
+
+        leaderboardList.appendChild(li);
+    });
+}
+
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchLeaderboardFromServer(); // Initial fetch on load
