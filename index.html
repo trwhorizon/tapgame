@@ -166,147 +166,143 @@
     </div>
 
     <script>
-        let score = 0;
-        let tapCount = 0; // Counter for taps
-        let playerName = '';
-        const cupImages = [
-            'cup_empty.jpg',
-            'cup_fill_1.jpg',
-            'cup_fill_2.jpg',
-            'cup_fill_3.jpg',
-            'cup_fill_4.jpg',
-            'cup_fill_5.jpg'
-        ];
+    let score = 0;
+    let tapCount = 0; // Counter for taps
+    let playerName = '';
+    const cupImages = [
+        'cup_empty.jpg',
+        'cup_fill_1.jpg',
+        'cup_fill_2.jpg',
+        'cup_fill_3.jpg',
+        'cup_fill_4.jpg',
+        'cup_fill_5.jpg'
+    ];
+    const apiUrl = 'https://api.sheety.co/a97560073a278d79eaceb3f30e584c29/leaderboard/leaderboardsheet';
 
-        function initGame() {
-            Telegram.WebApp.ready();
-            playerName = Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.username : 'Player';
-            document.getElementById('start-button').style.display = 'none';
-            document.getElementById('game-container').style.display = 'flex';
-            document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
-            document.body.style.backgroundSize = "cover";
-            restoreScore();
-            setInterval(fetchLeaderboardFromServer, 60000); // Update leaderboard every minute
-            fetchLeaderboardFromServer(); // Initial fetch
-        }
+    function initGame() {
+        Telegram.WebApp.ready();
+        playerName = Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.username : 'Player';
+        document.getElementById('start-button').style.display = 'none';
+        document.getElementById('game-container').style.display = 'flex';
+        document.body.style.background = "url('background_body.jpg') no-repeat center center fixed";
+        document.body.style.backgroundSize = "cover";
+        restoreScore();
+    }
 
-function incrementScore() {
-    tapCount++;
-    updateCupImage();
-    if (tapCount >= 5) {
-        score++;
-        tapCount = 0; // Reset tap count after 5 taps
-        document.getElementById('score').innerText = score;
-        showPlusOne();
-        saveScore();
-        sendScoreToServer(); // Send score to server
-        if (score % 10 === 0) {
-            showGoodJob();
+    function incrementScore() {
+        tapCount++;
+        updateCupImage();
+        if (tapCount >= 5) {
+            score++;
+            tapCount = 0; // Reset tap count after 5 taps
+            document.getElementById('score').innerText = score;
+            showPlusOne();
+            saveScore();
+            sendScoreToServer();
+            updateLeaderboard();
+            if (score % 10 === 0) {
+                showGoodJob();
+            }
         }
     }
-}
 
+    function updateCupImage() {
+        let imageIndex = Math.min(tapCount, 5); // Change image every tap, up to 5 taps
+        document.getElementById('coffeeCup').src = cupImages[imageIndex];
+    }
 
-        function updateCupImage() {
-            let imageIndex = Math.min(tapCount, 5); // Change image every tap, up to 5 taps
-            document.getElementById('coffeeCup').src = cupImages[imageIndex];
-        }
+    function showPlusOne() {
+        const plusOne = document.getElementById('plus-one');
+        plusOne.style.opacity = 1; // Show the +1
+        setTimeout(() => {
+            plusOne.style.opacity = 0; // Hide the +1 after 0.5 seconds
+        }, 500);
+    }
 
-        function showPlusOne() {
-            const plusOne = document.getElementById('plus-one');
-            plusOne.style.opacity = 1; // Show the +1
-            setTimeout(() => {
-                plusOne.style.opacity = 0; // Hide the +1 after 0.5 seconds
-            }, 500);
-        }
+    function showGoodJob() {
+        const goodJob = document.getElementById('good-job');
+        goodJob.style.opacity = 1; // Show the Good Job message
+        setTimeout(() => {
+            goodJob.style.opacity = 0; // Hide the Good Job message after 1 second
+        }, 1000);
+    }
 
-        function showGoodJob() {
-            const goodJob = document.getElementById('good-job');
-            goodJob.style.opacity = 1; // Show the Good Job message
-            setTimeout(() => {
-                goodJob.style.opacity = 0; // Hide the Good Job message after 1 second
-            }, 1000);
-        }
-
-        function updateLeaderboard() {
-            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-            leaderboard = leaderboard.filter(player => player.name !== playerName);
-            leaderboard.push({ name: playerName, score: score });
-            leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 16); // Keep only top 16 players
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-            displayLeaderboard(leaderboard);
-        }
-
-        function displayLeaderboard(leaderboard) {
-            const leaderboardList = document.getElementById('leaderboard-list');
-            leaderboardList.innerHTML = '';
-            leaderboard.forEach((player, index) => {
-                                const li = document.createElement('li');
-                const rank = index === 0 ? '1er' : `${index + 1}ème`;
-                li.textContent = `${rank} : ${player.name} - ${player.score}`;
-                leaderboardList.appendChild(li);
-            });
-        }
-
-        function saveScore() {
-            localStorage.setItem('player_' + playerName + '_score', score);
-        }
-
-        function restoreScore() {
-            score = parseInt(localStorage.getItem('player_' + playerName + '_score')) || 0;
-            document.getElementById('score').innerText = score;
-        }
-
-
-
-
-
-
-        const apiUrl = 'https://api.sheety.co/a97560073a278d79eaceb3f30e584c29/leaderboard/leaderboardsheet';
-
-function sendScoreToServer() {
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            leaderboardsheet: {
-                username: playerName,
-                score: score,
-                timestamp: new Date().toISOString()
-            }
+    function sendScoreToServer() {
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                leaderboardsheet: {
+                    username: playerName,
+                    score: score,
+                    timestamp: new Date().toISOString()
+                }
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Score sent successfully:', data);
-        updateLeaderboard();
-    })
-    .catch(error => {
-        console.error('Error sending score:', error);
-    });
-}
-
-function fetchLeaderboardFromServer() {
-    fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            const leaderboard = data.leaderboardsheet;
-            displayLeaderboard(leaderboard);
+            console.log('Score sent successfully:', data);
+            fetchLeaderboardFromServer();
         })
         .catch(error => {
-            console.error('Error fetching leaderboard:', error);
+            console.error('Error sending score:', error);
         });
-}
+    }
 
-        
+    function fetchLeaderboardFromServer() {
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const leaderboard = data.leaderboardsheet;
+                const filteredLeaderboard = filterAndKeepMaxScore(leaderboard);
+                displayLeaderboard(filteredLeaderboard);
+            })
+            .catch(error => {
+                console.error('Error fetching leaderboard:', error);
+            });
+    }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
-            displayLeaderboard(leaderboard);
+    function filterAndKeepMaxScore(leaderboard) {
+        const playerScores = {};
+        leaderboard.forEach(entry => {
+            if (!playerScores[entry.username] || playerScores[entry.username].score < entry.score) {
+                playerScores[entry.username] = entry;
+            }
         });
-    </script>
+        return Object.values(playerScores).sort((a, b) => b.score - a.score);
+    }
+
+    function updateLeaderboard() {
+        fetchLeaderboardFromServer();
+    }
+
+    function displayLeaderboard(leaderboard) {
+        const leaderboardList = document.getElementById('leaderboard-list');
+        leaderboardList.innerHTML = '';
+        leaderboard.forEach((player, index) => {
+            const li = document.createElement('li');
+            const rank = index === 0 ? '1er' : `${index + 1}ème`;
+            li.textContent = `${rank} : ${player.username} - ${player.score}`;
+            leaderboardList.appendChild(li);
+        });
+    }
+
+    function saveScore() {
+        localStorage.setItem('player_' + playerName + '_score', score);
+    }
+
+    function restoreScore() {
+        score = parseInt(localStorage.getItem('player_' + playerName + '_score')) || 0;
+        document.getElementById('score').innerText = score;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        displayLeaderboard(leaderboard);
+    });
+</script>
+
 </body>
 </html>
